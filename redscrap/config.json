@@ -1,0 +1,13 @@
+{
+    "fields": ["created_utc", 
+                "subreddit",
+                "author",
+                "url",
+                "num_comments",
+                "score",
+                "ups",
+                "downs",
+                "title",
+                "selftext",
+                "id"]
+}
