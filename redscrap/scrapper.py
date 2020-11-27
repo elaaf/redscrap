@@ -144,7 +144,11 @@ class RedScrap():
                 status_code, metadata, data = self.get_request(URL)
                 total_results = metadata["total_results"]
             
-            if total_results!=0:
+            if total_results==0:
+                if DATA_BUFFER:
+                    write_to_csv(DATA_BUFFER, self.filename)
+                break
+            else:
                 # Push received data into BUFFER
                 pbar.update(len(data))
                 DATA_BUFFER.extend(data)
@@ -159,8 +163,6 @@ class RedScrap():
                 if len(DATA_BUFFER)>=self.max_buffer_size:
                     write_to_csv(DATA_BUFFER, self.filename)
                     DATA_BUFFER.clear()
-            else:
-                write_to_csv(DATA_BUFFER, self.filename)
-                break         
+
         pbar.close()
         return
