@@ -9,7 +9,7 @@ from pprint import pprint
 
 # Local Imports
 from redscrap.utils import get_days_diff, get_epoch, get_timestamp, str2tuple, read_jsonfile
-from redscrap.storage import create_save_dir, write_to_csv, get_sha1
+from redscrap.storage import create_save_dir, write_to_csv, gen_save_filename
 
 
 
@@ -18,11 +18,8 @@ from redscrap.storage import create_save_dir, write_to_csv, get_sha1
 ##########################################################
 
 class RedScrap():
-    def __init__(self, start_date: str, end_date: str, size: int=1, 
-                 search_terms: list=[], subreddits :list=[], 
-                 fields: list=[],
-                 max_retries: int=100,
-                 max_buffer_size: int=2, friendly_mode_delay: int=0.75):
+    def __init__(self, start_date: str, end_date: str, size: int=1, search_terms: list=[], subreddits :list=[], 
+                 fields: list=[], max_retries: int=100, max_buffer_size: int=2, friendly_mode_delay: int=0.75):
         self.base_url = {
             "api" : {
                 "submissions" : "http://api.pushshift.io/reddit/search/submission/?",
@@ -47,8 +44,8 @@ class RedScrap():
         self.subreddits = subreddits
         self.config_filename = "./redscrap/config.json"
         self.fields = read_jsonfile(self.config_filename)["fields"]
-        self.save_path="downloads"
-        self.filename = self.__gen_filename__(start_date, end_date)
+        self.save_path = f"downloads/{start_date}->{end_date}"
+        self.filename = gen_save_filename( self )
         self.base_end_point = self.__get_base_endpoint__(access_method="api", content_type="submissions")
         # Creating Save Directory
         create_save_dir(self.save_path)
@@ -58,23 +55,18 @@ class RedScrap():
         print("================")
         print("=== RedScrap ===")
         print("================")
-        print(f"Between: \t\t{get_timestamp(self.start_epoch)}->{get_timestamp(self.end_epoch)}")
+        print(f"Between: \t\t{get_timestamp(self.start_epoch)} -> {get_timestamp(self.end_epoch)}")
         print(f"Contains (AND): \t{self.search_terms}")
         if not self.subreddits:
             print(f"Search In: \t\tALL SubReddits")
         else:  
             print(f"Search In: \t\t{self.subreddits}")
         print(f"SaveFile: \t\t{self.filename}")
-        
         print("\n")
         return
     
     
-    def __gen_filename__(self, start_date, end_date):
-        subs = ",".join(s for s in self.subreddits)
-        query = "+".join(q for q in self.search_terms)
-        filename = f"{self.save_path}/" + get_sha1(f"{start_date}--{end_date}--sub={subs}--query={query}") +".csv"
-        return filename
+
     
     
     def __get_base_endpoint__(self, access_method: str="api", content_type: str="submissions") -> str:
@@ -114,14 +106,14 @@ class RedScrap():
             return status_code, None, None
     
     
-    def retrieve_submissions(self, friendly_mode=True):
+    def retrieve_submissions(self, friendly_mode=True, retrieve_comments=False):
         
         # Show the current scrapper state
         self.__display_config__()
         
         DATA_BUFFER = []
         URL = self.__get_endpoint__()
-        print(f"URL:\n{URL}\n")
+        # print(f"URL:\n{URL}\n")
         
         # Fetch MetaData
         try:
@@ -168,4 +160,9 @@ class RedScrap():
                     DATA_BUFFER.clear()
 
         pbar.close()
+        return
+    
+    
+    def retrieve_comments(self):
+        
         return

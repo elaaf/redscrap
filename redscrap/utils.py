@@ -16,6 +16,7 @@ def read_jsonfile(filename):
         print(f"ERROR: {filename} Not Found!")
         return None
 
+
 def get_epoch(input_date: tuple) -> int:
     """Returns unix epochs value for date tuple of 
     format (Year,Month,Day,Hour,Min,Sec).
@@ -28,6 +29,7 @@ def get_epoch(input_date: tuple) -> int:
     """
     return int(datetime(*tuple(input_date)).timestamp())
 
+
 def get_timestamp(epoch: int) -> str:
     """Returns timestamp for a unix epochs value.
     
@@ -38,6 +40,7 @@ def get_timestamp(epoch: int) -> str:
         string: Timestamp
     """
     return datetime.fromtimestamp(epoch).strftime('%Y-%m-%d')
+
 
 def get_days_diff(input_date: tuple) -> int:
     """Returns days difference between CURRENT DATETIME and 

@@ -19,10 +19,10 @@ if __name__ == "__main__":
     # start_date, end_date, search_terms, subreddits = get_command_line_args()
     
     # Setting parameters
-    start_date = "2020-11-01"
-    end_date = "2020-11-26"
+    start_date = "2020-10-01"
+    end_date = "2020-10-03"
     subreddits = []
-    search_terms = [
+    search_terms_full = [
                     "("+
                     "Pakistan|Pak|pakistani|paki|پاکستان|لاہور|اسلام آباد"
                     +")"
@@ -51,7 +51,7 @@ if __name__ == "__main__":
                         end_date=end_date, 
                         search_terms=search_terms, 
                         subreddits=subreddits,
-                        max_buffer_size=1000,
+                        max_buffer_size=500,
                         size=1000)
     
     # Get Reddit Submissions
