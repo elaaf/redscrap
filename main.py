@@ -46,5 +46,5 @@ if __name__ == "__main__":
                         )
     
     # Get Reddit Submissions
-    scrapper.retrieve_submissions(retrieve_comments=False)
+    scrapper.retrieve_submissions(retrieve_comments=True)
     

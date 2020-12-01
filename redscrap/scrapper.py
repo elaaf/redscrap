@@ -19,7 +19,7 @@ from redscrap.storage import create_save_dir, write_to_csv, gen_save_filename, s
 
 class RedScrap():
     def __init__(self, start_date: str, end_date: str, size: int=1000, search_terms: list=[], subreddits :list=[], 
-                 max_retries: int=100, max_buffer_size: int=500, friendly_mode: bool=True, friendly_mode_delay: int=0.25):
+                 max_retries: int=100, buffer_dump_iter: int=50, friendly_mode: bool=True, friendly_mode_delay: int=0.25):
         self.base_url = {
             "api" : {
                 "submissions" : "http://api.pushshift.io/reddit/search/submission/?",
@@ -39,7 +39,7 @@ class RedScrap():
         }
         
         self.max_retries = int(max_retries)
-        self.max_buffer_size = int(max_buffer_size)
+        self.buffer_dump_iter = int(buffer_dump_iter)
         self.start_epoch = get_epoch( str2tuple(start_date) )
         self.current_start_epoch = self.start_epoch
         self.end_epoch = get_epoch( str2tuple(end_date) )
@@ -118,7 +118,7 @@ class RedScrap():
     
     
     def retrieve_submissions(self, retrieve_comments=False):
-        # STORAGE
+        iterations = 0
         SUBMISSIONS_COUNT, COMMENTS_COUNT = 0, 0
         SUBMISSIONS_BUFFER, COMMENTS_BUFFER = [], []
         
@@ -141,6 +141,7 @@ class RedScrap():
             exit()
         
         while(True):
+            iteration +=1
             # Requesting
             status_code, retries = 0, -1
 
@@ -159,7 +160,10 @@ class RedScrap():
                     SUBMISSIONS_BUFFER.clear()
                 if COMMENTS_BUFFER:
                     write_to_csv(COMMENTS_BUFFER, self.filename_comments)
-                    COMMENTS_BUFFER.clear()    
+                    COMMENTS_BUFFER.clear() 
+                
+                # Save Object State
+                save_state(self)
                 # Exit out the Infinite loop
                 break
             
@@ -185,15 +189,16 @@ class RedScrap():
                     COMMENTS_BUFFER.extend(comments)
 
                 # Write Data to Disk
-                if len(SUBMISSIONS_BUFFER)>=self.max_buffer_size:
-                    write_to_csv(SUBMISSIONS_BUFFER, self.filename_submissions)
-                    SUBMISSIONS_BUFFER.clear()
-                if len(COMMENTS_BUFFER)>=self.max_buffer_size:
-                    write_to_csv(COMMENTS_BUFFER, self.filename_comments)
-                    COMMENTS_BUFFER.clear()
-                    
-                # Save Object State
-                save_state(self)
+                if iterations>=self.buffer_dump_iter:
+                    iteration = 0
+                    if SUBMISSIONS_BUFFER:
+                        write_to_csv(SUBMISSIONS_BUFFER, self.filename_submissions)
+                        SUBMISSIONS_BUFFER.clear()
+                    if COMMENTS_BUFFER:
+                        write_to_csv(COMMENTS_BUFFER, self.filename_comments)
+                        COMMENTS_BUFFER.clear()                    
+                    # Save Object State
+                    save_state(self)
                 
                 # Get the next batch
                 if data:
