@@ -34,11 +34,11 @@ def write_to_csv(DATA_BUFFER, filename):
     return
 
 
-def gen_save_filename(object):
+def gen_save_filename(object, prefix=""):
     subs = ",".join(s for s in object.subreddits)
     query = "+".join(q for q in object.search_terms)
     start_date = get_timestamp( object.start_epoch )
     end_date = get_timestamp( object.end_epoch )
     
-    filename = f"{object.save_path}/" + get_sha1(f"{start_date}--{end_date}--sub={subs}--query={query}") +".csv"
+    filename = f"{object.save_path}/{prefix}" + get_sha1(f"{start_date}--{end_date}--sub={subs}--query={query}") + ".csv"
     return filename

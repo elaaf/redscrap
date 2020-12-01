@@ -1,5 +1,6 @@
 {
-    "fields": ["created_utc", 
+    "submission_fields": [
+                "created_utc", 
                 "subreddit",
                 "author",
                 "url",
@@ -9,5 +10,16 @@
                 "downs",
                 "title",
                 "selftext",
-                "id"]
+                "id"
+            ],
+    "comment_fields": [
+                "created_utc", 
+                "author",
+                "permalink",
+                "score",
+                "ups",
+                "downs",
+                "body",
+                "id"
+    ]
 }

@@ -19,30 +19,24 @@ if __name__ == "__main__":
     # start_date, end_date, search_terms, subreddits = get_command_line_args()
     
     # Setting parameters
-    start_date = "2020-10-01"
-    end_date = "2020-10-03"
+    start_date = "2020-11-01"
+    end_date = "2020-11-30"
     subreddits = []
-    search_terms_full = [
-                    "("+
-                    "Pakistan|Pak|pakistani|paki|پاکستان|لاہور|اسلام آباد"
-                    +")"
-                    ,
-                    "("+
-                    "covid|corona|covid19|covid-19|coronavirus"
-                    +"|".join(x for x in ["کرونا", "کورونا", "کورونا وائرس", "corona", "coronavirus","کرونا وائرس","کرونا", "کورونا", "کورونا وائرس", "corona",
-                    "coronavirus","covid","covid19","covid-19","وائرس", "corona virus",
-                    "wuhan","ووہان","لاک ڈاؤن","lockdown"])
-                    +")"
-                    ]
+    # search_terms_full = [
+    #                 "("+
+    #                 "Pakistan|Pak|pakistani|paki|پاکستان|لاہور|اسلام آباد"
+    #                 +")"
+    #                 ,
+    #                 "("+
+    #                 "covid|corona|covid19|covid-19|coronavirus"
+    #                 +"|".join(x for x in ["کرونا", "کورونا", "کورونا وائرس", "corona", "coronavirus","کرونا وائرس","کرونا", "کورونا", "کورونا وائرس", "corona",
+    #                 "coronavirus","covid","covid19","covid-19","وائرس", "corona virus",
+    #                 "wuhan","ووہان","لاک ڈاؤن","lockdown"])
+    #                 +")"
+    #                 ]
     
     search_terms = [
-                # "("+
                 "Pakistan|Pak|pakistani|paki|پاکستان|لاہور"
-                # +")"
-                # ,
-                # "("+
-                # "covid|corona|covid19|covid-19|coronavirus"
-                # +")"
                 ]
 
     
@@ -52,7 +46,8 @@ if __name__ == "__main__":
                         search_terms=search_terms, 
                         subreddits=subreddits,
                         max_buffer_size=500,
-                        size=1000)
+                        size=2)
     
     # Get Reddit Submissions
-    scrapper.retrieve_submissions()
+    scrapper.retrieve_submissions(retrieve_comments=True)
+    
