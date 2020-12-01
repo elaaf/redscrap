@@ -19,7 +19,7 @@ from redscrap.storage import create_save_dir, write_to_csv, gen_save_filename, s
 
 class RedScrap():
     def __init__(self, start_date: str, end_date: str, size: int=1000, search_terms: list=[], subreddits :list=[], 
-                 max_retries: int=100, buffer_dump_iter: int=50, friendly_mode: bool=True, friendly_mode_delay: int=0.25):
+                 max_retries: int=100, buffer_dump_iter: int=5, friendly_mode: bool=True, friendly_mode_delay: int=0.25):
         self.base_url = {
             "api" : {
                 "submissions" : "http://api.pushshift.io/reddit/search/submission/?",
@@ -37,6 +37,12 @@ class RedScrap():
             True: sleep(friendly_mode_delay),
             False: None
         }
+        # self.submission_fields = []
+        # self.comment_fields = []
+        # self.submission_fields = read_jsonfile(self.config_filename)["submission_fields"]
+        # self.comment_fields = read_jsonfile(self.config_filename)["comment_fields"]
+        self.submission_fields = ["created_utc", "subreddit","author","url","num_comments","score","ups","downs","title","selftext","id"]
+        self.comment_fields = ["created_utc", "author","parent_id","permalink","score","ups","downs","body","id"]
         
         self.max_retries = int(max_retries)
         self.buffer_dump_iter = int(buffer_dump_iter)
@@ -47,8 +53,7 @@ class RedScrap():
         self.search_terms = search_terms
         self.subreddits = subreddits
         self.config_filename = "./redscrap/config.json"
-        self.submission_fields = read_jsonfile(self.config_filename)["submission_fields"]
-        self.comment_fields = read_jsonfile(self.config_filename)["comment_fields"]
+
         self.save_path = f"downloads/{start_date}->{end_date}"
         self.filename_submissions = gen_save_filename( self, prefix="submissions-" )
         self.filename_comments = gen_save_filename( self, prefix="comments-" )

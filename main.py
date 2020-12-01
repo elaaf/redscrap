@@ -42,7 +42,8 @@ if __name__ == "__main__":
     # Creating a RedScrapper Object
     scrapper = RedScrap(start_date=start_date, 
                         end_date=end_date, 
-                        search_terms=search_terms
+                        search_terms=search_terms,
+                        buffer_dump_iter=1
                         )
     
     # Get Reddit Submissions
