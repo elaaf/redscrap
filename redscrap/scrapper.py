@@ -9,7 +9,7 @@ from pprint import pprint
 
 # Local Imports
 from redscrap.utils import get_days_diff, get_epoch, get_timestamp, str2tuple, read_jsonfile
-from redscrap.storage import create_save_dir, write_to_csv
+from redscrap.storage import create_save_dir, write_to_csv, get_sha1
 
 
 
@@ -64,6 +64,8 @@ class RedScrap():
             print(f"Search In: \t\tALL SubReddits")
         else:  
             print(f"Search In: \t\t{self.subreddits}")
+        print(f"SaveFile: \t\t{self.filename}")
+        
         print("\n")
         return
     
@@ -71,7 +73,7 @@ class RedScrap():
     def __gen_filename__(self, start_date, end_date):
         subs = ",".join(s for s in self.subreddits)
         query = "+".join(q for q in self.search_terms)
-        filename = f"{self.save_path}/{start_date}--{end_date}--sub={subs}--query={query}.csv"
+        filename = f"{self.save_path}/" + get_sha1(f"{start_date}--{end_date}--sub={subs}--query={query}") +".csv"
         return filename
     
     
@@ -119,13 +121,14 @@ class RedScrap():
         
         DATA_BUFFER = []
         URL = self.__get_endpoint__()
-        # print(f"URL:\n{URL}\n")
+        print(f"URL:\n{URL}\n")
         
         # Fetch MetaData
         try:
             _, metadata, _ = self.get_request(URL)
             pbar = tqdm(total=metadata["total_results"])
-
+            
+            
         except Exception as e:
             print("Unable to fetch MetaData")
             print(e)
