@@ -54,7 +54,7 @@ class RedScrap():
         self.subreddits = subreddits
         self.config_filename = "./redscrap/config.json"
 
-        self.save_path = f"downloads/{start_date}->{end_date}"
+        self.save_path = f"downloads/{start_date}--{end_date}"
         self.filename_submissions = gen_save_filename( self, prefix="submissions-" )
         self.filename_comments = gen_save_filename( self, prefix="comments-" )
         # Creating Save Directory
