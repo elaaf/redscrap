@@ -141,7 +141,7 @@ class RedScrap():
             exit()
         
         while(True):
-            iteration +=1
+            iterations +=1
             # Requesting
             status_code, retries = 0, -1
 
