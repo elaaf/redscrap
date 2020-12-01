@@ -234,14 +234,16 @@ class RedScrap():
                 retries += 1
                 response = requests.get(submission_url)
                 status_code = response.status_code
-                
-            retreived_comment_ids = response.json()["data"]
-            list_of_comment_ids.extend(retreived_comment_ids)
+            
+            if status_code==200:
+                retreived_comment_ids = response.json()["data"]
+                list_of_comment_ids.extend(retreived_comment_ids)
         
         return list_of_comment_ids
     
     
     def retrieve_comments_by_id(self, list_of_comment_ids):
+        retreived_comment_ids = []
         URL = self.__get_base_endpoint__(access_method="api", content_type="comments_by_id")
         URL += "&ids=" + ",".join(c for c in list_of_comment_ids)
         
@@ -251,7 +253,7 @@ class RedScrap():
             retries += 1
             response = requests.get(URL)
             status_code = response.status_code
-
-        retreived_comment_ids = response.json()["data"]
+        if status_code==200:
+            retreived_comment_ids = response.json()["data"]
         
         return retreived_comment_ids
