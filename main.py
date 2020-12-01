@@ -20,8 +20,7 @@ if __name__ == "__main__":
     
     # Setting parameters
     start_date = "2020-11-01"
-    end_date = "2020-11-30"
-    subreddits = []
+    end_date = "2020-12-01"
     # search_terms_full = [
     #                 "("+
     #                 "Pakistan|Pak|pakistani|paki|پاکستان|لاہور|اسلام آباد"
@@ -43,11 +42,9 @@ if __name__ == "__main__":
     # Creating a RedScrapper Object
     scrapper = RedScrap(start_date=start_date, 
                         end_date=end_date, 
-                        search_terms=search_terms, 
-                        subreddits=subreddits,
-                        max_buffer_size=500,
-                        size=2)
+                        search_terms=search_terms
+                        )
     
     # Get Reddit Submissions
-    scrapper.retrieve_submissions(retrieve_comments=True)
+    scrapper.retrieve_submissions(retrieve_comments=False)
     

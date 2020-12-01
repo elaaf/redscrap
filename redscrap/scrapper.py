@@ -9,7 +9,7 @@ from pprint import pprint
 
 # Local Imports
 from redscrap.utils import get_days_diff, get_epoch, get_timestamp, str2tuple, read_jsonfile
-from redscrap.storage import create_save_dir, write_to_csv, gen_save_filename
+from redscrap.storage import create_save_dir, write_to_csv, gen_save_filename, save_state, restore_state
 
 
 
@@ -18,8 +18,8 @@ from redscrap.storage import create_save_dir, write_to_csv, gen_save_filename
 ##########################################################
 
 class RedScrap():
-    def __init__(self, start_date: str, end_date: str, size: int=1, search_terms: list=[], subreddits :list=[], 
-                 max_retries: int=100, max_buffer_size: int=2, friendly_mode: bool=True, friendly_mode_delay: int=0.25):
+    def __init__(self, start_date: str, end_date: str, size: int=1000, search_terms: list=[], subreddits :list=[], 
+                 max_retries: int=100, max_buffer_size: int=500, friendly_mode: bool=True, friendly_mode_delay: int=0.25):
         self.base_url = {
             "api" : {
                 "submissions" : "http://api.pushshift.io/reddit/search/submission/?",
@@ -53,7 +53,7 @@ class RedScrap():
         self.filename_submissions = gen_save_filename( self, prefix="submissions-" )
         self.filename_comments = gen_save_filename( self, prefix="comments-" )
         # Creating Save Directory
-        create_save_dir(self.save_path)
+        create_save_dir(self.save_path)        
         return
     
     
@@ -68,6 +68,11 @@ class RedScrap():
         else:  
             print(f"Search In: \t\t{self.subreddits}")
         print(f"SavePath: \t\t{self.save_path}")
+        print(f"SaveFile(s): ")
+        print(f"\t\t\t{self.filename_submissions}")
+        print(f"\t\t\t{self.filename_comments}")
+        # Restore State
+        restore_state(self)
         print("\n")
         return
     
@@ -178,13 +183,7 @@ class RedScrap():
                     # Push received comments into BUFFER
                     COMMENTS_COUNT += len(comments)
                     COMMENTS_BUFFER.extend(comments)
-                
-                # Get the next batch
-                if data:
-                    new_start_epoch = data[-1]["created_utc"]
-                    self.current_start_epoch = new_start_epoch
-                URL = BASEURL+f"&after={self.current_start_epoch}&before={self.end_epoch}"
-                
+
                 # Write Data to Disk
                 if len(SUBMISSIONS_BUFFER)>=self.max_buffer_size:
                     write_to_csv(SUBMISSIONS_BUFFER, self.filename_submissions)
@@ -192,6 +191,17 @@ class RedScrap():
                 if len(COMMENTS_BUFFER)>=self.max_buffer_size:
                     write_to_csv(COMMENTS_BUFFER, self.filename_comments)
                     COMMENTS_BUFFER.clear()
+                    
+                # Save Object State
+                save_state(self)
+                
+                # Get the next batch
+                if data:
+                    new_start_epoch = data[-1]["created_utc"]
+                    self.current_start_epoch = new_start_epoch
+                URL = BASEURL+f"&after={self.current_start_epoch}&before={self.end_epoch}"
+                
+
 
         pbar.close()
         print("SUCCESS!")

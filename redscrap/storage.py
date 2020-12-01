@@ -35,10 +35,42 @@ def write_to_csv(DATA_BUFFER, filename):
 
 
 def gen_save_filename(object, prefix=""):
-    subs = ",".join(s for s in object.subreddits)
-    query = "+".join(q for q in object.search_terms)
-    start_date = get_timestamp( object.start_epoch )
-    end_date = get_timestamp( object.end_epoch )
+    subreddits = ",".join(s for s in object.subreddits)
+    search_terms = "+".join(q for q in object.search_terms)
+    start_date = object.start_epoch
+    end_date = object.end_epoch
     
-    filename = f"{object.save_path}/{prefix}" + get_sha1(f"{start_date}--{end_date}--sub={subs}--query={query}") + ".csv"
+    filename = f"{object.save_path}/{prefix}" + get_sha1(f"{start_date}{end_date}{subreddits}{search_terms}") + ".csv"
     return filename
+
+
+
+def save_state(object):
+    subreddits = ",".join(s for s in object.subreddits)
+    search_terms = "+".join(q for q in object.search_terms)
+    start_date = object.start_epoch
+    end_date = object.end_epoch
+    
+    sha1 = get_sha1(f"{start_date}{end_date}{subreddits}{search_terms}")
+    
+    with open(f"{object.save_path}/{sha1}.state", "wb") as file:
+        file.write(str(object.current_start_epoch).encode())
+    return
+
+
+def restore_state(object):
+    subreddits = ",".join(s for s in object.subreddits)
+    search_terms = "+".join(q for q in object.search_terms)
+    start_date = object.start_epoch
+    end_date = object.end_epoch
+    
+    sha1 = get_sha1(f"{start_date}{end_date}{subreddits}{search_terms}")
+    
+    if os.path.isfile(f"{object.save_path}/{sha1}.state"):
+        with open(f"{object.save_path}/{sha1}.state", "rb") as file:
+            read_string = file.read()
+            object.current_start_epoch = int(read_string.decode())
+    
+        print("Restored previous state")
+        print(f"Resuming from {get_timestamp(object.current_start_epoch)}...")
+    return
