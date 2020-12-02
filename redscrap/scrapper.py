@@ -8,7 +8,7 @@ from tqdm import tqdm
 from pprint import pprint
 
 # Local Imports
-from redscrap.utils import get_days_diff, get_epoch, get_timestamp, str2tuple, read_jsonfile
+from redscrap.utils import get_days_diff, get_epoch, get_timestamp, str2tuple
 from redscrap.storage import create_save_dir, write_to_csv, gen_save_filename, save_state, restore_state
 
 
@@ -19,7 +19,7 @@ from redscrap.storage import create_save_dir, write_to_csv, gen_save_filename, s
 
 class RedScrap():
     def __init__(self, start_date: str, end_date: str, size: int=1000, search_terms: list=[], subreddits :list=[], 
-                 max_retries: int=100, buffer_dump_iter: int=5, friendly_mode: bool=True, friendly_mode_delay: int=0.25):
+                 max_retries: int=50, buffer_dump_iter: int=5, friendly_mode: bool=True, friendly_mode_delay: int=0.25):
         self.base_url = {
             "api" : {
                 "submissions" : "http://api.pushshift.io/reddit/search/submission/?",
@@ -37,10 +37,6 @@ class RedScrap():
             True: sleep(friendly_mode_delay),
             False: None
         }
-        # self.submission_fields = []
-        # self.comment_fields = []
-        # self.submission_fields = read_jsonfile(self.config_filename)["submission_fields"]
-        # self.comment_fields = read_jsonfile(self.config_filename)["comment_fields"]
         self.submission_fields = ["created_utc", "subreddit","author","url","num_comments","score","ups","downs","title","selftext","id"]
         self.comment_fields = ["created_utc", "author","parent_id","permalink","score","ups","downs","body","id"]
         
@@ -192,7 +188,16 @@ class RedScrap():
                     # Push received comments into BUFFER
                     COMMENTS_COUNT += len(comments)
                     COMMENTS_BUFFER.extend(comments)
-
+                
+                # Get the next batch
+                if data:
+                    new_start_epoch = data[-1]["created_utc"]
+                    if new_start_epoch == self.current_start_epoch:
+                        self.current_start_epoch = new_start_epoch+1
+                    else
+                        self.current_start_epoch = new_start_epoch
+                URL = BASEURL+f"&after={self.current_start_epoch}&before={self.end_epoch}"
+                
                 # Write Data to Disk
                 if iterations>=self.buffer_dump_iter:
                     iteration = 0
@@ -204,14 +209,6 @@ class RedScrap():
                         COMMENTS_BUFFER.clear()                    
                     # Save Object State
                     save_state(self)
-                
-                # Get the next batch
-                if data:
-                    new_start_epoch = data[-1]["created_utc"]
-                    self.current_start_epoch = new_start_epoch
-                URL = BASEURL+f"&after={self.current_start_epoch}&before={self.end_epoch}"
-                
-
 
         pbar.close()
         print("SUCCESS!")

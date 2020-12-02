@@ -6,16 +6,6 @@ from datetime import datetime, timedelta
 
 
 
-def read_jsonfile(filename):
-
-    if os.path.isfile(filename):
-        with open(filename, "r") as f:
-            config = json.load(f)
-            return config
-    else:
-        print(f"ERROR: {filename} Not Found!")
-        return None
-
 
 def get_epoch(input_date: tuple) -> int:
     """Returns unix epochs value for date tuple of 

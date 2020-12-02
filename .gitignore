@@ -7,3 +7,4 @@ downloads
 *.swp
 *.ipynb
 *.pyc
+temp*

@@ -74,3 +74,36 @@ def restore_state(object):
         print("Restored previous state")
         print(f"Resuming from {get_timestamp(object.current_start_epoch)}...")
     return
+
+
+
+def read_csv_generator(filename, encoding="utf-8"):
+    with open(filename, "r", encoding=encoding) as file:
+        for line in file:
+            yield line
+
+
+def combine_csv_files(files_to_combine: list, target_filename: str="", encoding="utf-8"):
+    if len(files_to_combine)<2:
+        raise ValueError("Specify atleast two csv filenames")
+    
+    # Set target_filename to the first file, if not specified
+    if not target_filename:
+        target_filename = files_to_combine[0]
+    
+    # Opening Target csv file
+    with open(target_filename, "w", encoding=encoding) as target_file:
+        
+        # Open each file to combine
+        for file_number, file_name in enumerate(files_to_combine):
+            
+            reader = read_csv_generator(file_name, encoding)
+            if file_number==1:
+                header = next(reader)
+                target_file.write(header)
+            else:
+                next(reader, None)
+            
+            for line in reader:
+                target_file.write(line)
+    return
