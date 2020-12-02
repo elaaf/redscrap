@@ -152,7 +152,12 @@ class RedScrap():
                 
                 retries+=1
                 status_code, metadata, data = self.get_request_for_submissions(URL)
+            
+            # If no response after 'max_retries'
+            try:
                 total_results = metadata["total_results"]
+            except:
+                raise Exception(f"Timed out after {retries} retires !!")
             
             # Exit scenario - All data scraped
             if total_results==0:
