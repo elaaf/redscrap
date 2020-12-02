@@ -194,7 +194,7 @@ class RedScrap():
                     new_start_epoch = data[-1]["created_utc"]
                     if new_start_epoch == self.current_start_epoch:
                         self.current_start_epoch = new_start_epoch+1
-                    else
+                    else:
                         self.current_start_epoch = new_start_epoch
                 URL = BASEURL+f"&after={self.current_start_epoch}&before={self.end_epoch}"
                 
