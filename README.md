@@ -1,7 +1,7 @@
 # RedScrap
 A Reddit Scrapper built around the [PushShift API](https://github.com/pushshift/api "PushShift API").
 
-![RedScrap](http://github.com/elaaf/redscrap/images/usage.png)
+![RedScrap](https://github.com/elaaf/redscrap/blob/main/images/usage.png)
 
 
 ## Features
@@ -11,7 +11,7 @@ A Reddit Scrapper built around the [PushShift API](https://github.com/pushshift/
 * Complex Search Query support and sepcify Subreddits to restrict search
 * Resume from last saved state
 
-![Resume State](http://github.com/elaaf/redscrap/images/resume.png)
+![Resume State](https://github.com/elaaf/redscrap/blob/main/images/resume.png)
 
 ## Requirements
 ```bash
