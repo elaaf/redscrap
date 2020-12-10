@@ -22,7 +22,10 @@ if __name__ == "__main__":
     start_date = "2020-11-01"
     end_date = "2020-11-02"
     
+    # Search terms
     search_terms = [ "COVID|corona" ]
+    # Subreddits to look in.... (default=ALL)
+    subreddits = []
 
     
     # Creating a RedScrapper Object
